@@ -165,6 +165,17 @@ void MainWindow::createNewRequestTab()
         statusBar()->showMessage("Request completed");
     });
     
+    // Connect collection manager to request panel for loading saved requests
+    connect(m_collectionManager, &CollectionManager::requestSelected,
+            [requestPanel](const QString &name, const QString &method, const QString &url,
+                          const QString &headers, const QString &body, const QString &parameters) {
+        requestPanel->setMethod(method);
+        requestPanel->setUrl(url);
+        requestPanel->setHeaders(headers);
+        requestPanel->setBody(body);
+        requestPanel->setParameters(parameters);
+    });
+    
     int tabIndex = m_requestTabs->addTab(requestPanel, "New Request");
     m_requestTabs->setCurrentIndex(tabIndex);
 }

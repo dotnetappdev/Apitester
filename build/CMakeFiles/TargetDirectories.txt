@@ -1,5 +1,0 @@
-/home/runner/work/Apitester/Apitester/build/CMakeFiles/ApiTester.dir
-/home/runner/work/Apitester/Apitester/build/CMakeFiles/edit_cache.dir
-/home/runner/work/Apitester/Apitester/build/CMakeFiles/rebuild_cache.dir
-/home/runner/work/Apitester/Apitester/build/CMakeFiles/ApiTester_autogen_timestamp_deps.dir
-/home/runner/work/Apitester/Apitester/build/CMakeFiles/ApiTester_autogen.dir
