@@ -1,0 +1,29 @@
+{
+	"BUILD_DIR" : "/home/runner/work/Apitester/Apitester/build/ApiTester_autogen",
+	"CMAKE_BINARY_DIR" : "/home/runner/work/Apitester/Apitester/build",
+	"CMAKE_CURRENT_BINARY_DIR" : "/home/runner/work/Apitester/Apitester/build",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/home/runner/work/Apitester/Apitester",
+	"CMAKE_SOURCE_DIR" : "/home/runner/work/Apitester/Apitester",
+	"CROSS_CONFIG" : false,
+	"GENERATOR" : "Unix Makefiles",
+	"INCLUDE_DIR" : "/home/runner/work/Apitester/Apitester/build/ApiTester_autogen/include",
+	"INPUTS" : 
+	[
+		"/home/runner/work/Apitester/Apitester/resources/icons/save.png",
+		"/home/runner/work/Apitester/Apitester/resources/icons/send.png",
+		"/home/runner/work/Apitester/Apitester/resources/icons/theme.png",
+		"/home/runner/work/Apitester/Apitester/resources/icons/app.ico",
+		"/home/runner/work/Apitester/Apitester/resources/icons/new.png"
+	],
+	"LOCK_FILE" : "/home/runner/work/Apitester/Apitester/build/CMakeFiles/ApiTester_autogen.dir/AutoRcc_resources_3YJK5W5UP7_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "-name", "resources" ],
+	"OUTPUT_CHECKSUM" : "3YJK5W5UP7",
+	"OUTPUT_NAME" : "qrc_resources.cpp",
+	"RCC_EXECUTABLE" : "/usr/lib/qt5/bin/rcc",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "/home/runner/work/Apitester/Apitester/build/CMakeFiles/ApiTester_autogen.dir/AutoRcc_resources_3YJK5W5UP7_Used.txt",
+	"SOURCE" : "/home/runner/work/Apitester/Apitester/resources/resources.qrc",
+	"USE_BETTER_GRAPH" : false,
+	"VERBOSITY" : 0
+}
