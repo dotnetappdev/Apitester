@@ -105,16 +105,6 @@ void MainWindow::setupMenuBar()
     
     fileMenu->addSeparator();
     
-    m_exportAction = new QAction("&Export Collection", this);
-    connect(m_exportAction, &QAction::triggered, this, &MainWindow::exportCollection);
-    fileMenu->addAction(m_exportAction);
-    
-    m_importAction = new QAction("&Import Collection", this);
-    connect(m_importAction, &QAction::triggered, this, &MainWindow::importCollection);
-    fileMenu->addAction(m_importAction);
-    
-    fileMenu->addSeparator();
-    
     m_exitAction = new QAction("E&xit", this);
     m_exitAction->setShortcut(QKeySequence::Quit);
     connect(m_exitAction, &QAction::triggered, this, &QWidget::close);
@@ -195,18 +185,6 @@ void MainWindow::loadCollection()
 {
     // TODO: Implement load collection functionality
     statusBar()->showMessage("Load collection - Not yet implemented", 2000);
-}
-
-void MainWindow::exportCollection()
-{
-    // TODO: Implement export collection functionality
-    statusBar()->showMessage("Export collection - Not yet implemented", 2000);
-}
-
-void MainWindow::importCollection()
-{
-    // TODO: Implement import collection functionality
-    statusBar()->showMessage("Import collection - Not yet implemented", 2000);
 }
 
 void MainWindow::toggleTheme()

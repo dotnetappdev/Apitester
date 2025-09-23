@@ -25,8 +25,6 @@ private slots:
     void newRequest();
     void saveCollection();
     void loadCollection();
-    void exportCollection();
-    void importCollection();
     void toggleTheme();
     void about();
 
@@ -48,8 +46,6 @@ private:
     QAction *m_newRequestAction;
     QAction *m_saveAction;
     QAction *m_loadAction;
-    QAction *m_exportAction;
-    QAction *m_importAction;
     QAction *m_toggleThemeAction;
     QAction *m_aboutAction;
     QAction *m_exitAction;
