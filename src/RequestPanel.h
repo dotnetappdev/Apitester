@@ -10,6 +10,8 @@
 #include <QtWidgets/QTextEdit>
 
 class HttpClient;
+class JsonSyntaxHighlighter;
+class XmlSyntaxHighlighter;
 
 class RequestPanel : public QWidget
 {
@@ -42,9 +44,16 @@ private slots:
     void removeHeader();
     void addParameter();
     void removeParameter();
+    void onBodyTypeChanged();
+    void onBodyTextChanged();
     
 private:
     void setupUI();
+    void setupMethodCombo();
+    void applySyntaxHighlighting();
+    void updateBodyEditor();
+    QString getHttpMethodIcon(const QString &method);
+    QString getHttpMethodColor(const QString &method);
     void populateHeadersFromTable();
     void populateParametersFromTable();
     void populateTableFromHeaders();
@@ -77,6 +86,10 @@ private:
     QLineEdit *m_tokenEdit;
     
     HttpClient *m_httpClient;
+    
+    // Syntax highlighters
+    JsonSyntaxHighlighter *m_jsonHighlighter;
+    XmlSyntaxHighlighter *m_xmlHighlighter;
 };
 
 #endif // REQUESTPANEL_H

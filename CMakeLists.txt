@@ -30,6 +30,7 @@ set(SOURCES
     src/SettingsDialog.cpp
     src/TestRunner.cpp
     src/TestExplorer.cpp
+    src/SyntaxHighlighter.cpp
 )
 
 set(HEADERS
@@ -45,6 +46,7 @@ set(HEADERS
     src/SettingsDialog.h
     src/TestRunner.h
     src/TestExplorer.h
+    src/SyntaxHighlighter.h
 )
 
 # UI files

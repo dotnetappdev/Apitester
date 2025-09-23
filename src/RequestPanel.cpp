@@ -1,5 +1,6 @@
 #include "RequestPanel.h"
 #include "HttpClient.h"
+#include "SyntaxHighlighter.h"
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
@@ -8,12 +9,18 @@
 #include <QtWidgets/QCheckBox>
 #include <QtCore/QUrl>
 #include <QtCore/QUrlQuery>
+#include <QtGui/QFont>
 
 RequestPanel::RequestPanel(QWidget *parent)
     : QWidget(parent)
     , m_httpClient(new HttpClient(this))
+    , m_jsonHighlighter(nullptr)
+    , m_xmlHighlighter(nullptr)
 {
     setupUI();
+    
+    // Initialize body editor state
+    updateBodyEditor();
     
     connect(m_httpClient, &HttpClient::responseReceived, 
             this, &RequestPanel::onResponseReceived);
@@ -24,21 +31,63 @@ RequestPanel::RequestPanel(QWidget *parent)
 void RequestPanel::setupUI()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    mainLayout->setSpacing(10);
+    mainLayout->setContentsMargins(10, 10, 10, 10);
     
-    // Request line
+    // Request line with enhanced Postman-like styling
     QHBoxLayout *requestLayout = new QHBoxLayout();
+    requestLayout->setSpacing(8);
     
+    // Method combo with icons and colors
     m_methodCombo = new QComboBox();
-    m_methodCombo->addItems({"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"});
-    m_methodCombo->setFixedWidth(100);
+    setupMethodCombo();
     requestLayout->addWidget(m_methodCombo);
     
+    // URL input with enhanced styling
     m_urlEdit = new QLineEdit();
-    m_urlEdit->setPlaceholderText("Enter request URL...");
+    m_urlEdit->setPlaceholderText("Enter request URL (e.g., https://api.example.com/endpoint)");
+    m_urlEdit->setStyleSheet(R"(
+        QLineEdit {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            background-color: white;
+        }
+        QLineEdit:focus {
+            border-color: #007acc;
+            outline: none;
+        }
+        QLineEdit:hover {
+            border-color: #c0c0c0;
+        }
+    )");
     requestLayout->addWidget(m_urlEdit);
     
+    // Enhanced Send button with Postman-like styling
     m_sendButton = new QPushButton("Send");
-    m_sendButton->setFixedWidth(80);
+    m_sendButton->setFixedSize(100, 36);
+    m_sendButton->setStyleSheet(R"(
+        QPushButton {
+            background-color: #ff6c37;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 8px 16px;
+        }
+        QPushButton:hover {
+            background-color: #e55a2b;
+        }
+        QPushButton:pressed {
+            background-color: #d44a20;
+        }
+        QPushButton:disabled {
+            background-color: #cccccc;
+            color: #666666;
+        }
+    )");
     connect(m_sendButton, &QPushButton::clicked, this, &RequestPanel::sendRequest);
     requestLayout->addWidget(m_sendButton);
     
@@ -70,22 +119,73 @@ void RequestPanel::setupUI()
     
     m_requestTabs->addTab(headersWidget, "Headers");
     
-    // Body tab
+    // Body tab with enhanced styling and syntax highlighting
     QWidget *bodyWidget = new QWidget();
     QVBoxLayout *bodyLayout = new QVBoxLayout(bodyWidget);
+    bodyLayout->setSpacing(8);
     
+    // Body type selection with enhanced styling
     QHBoxLayout *bodyTypeLayout = new QHBoxLayout();
-    bodyTypeLayout->addWidget(new QLabel("Body Type:"));
+    QLabel *bodyTypeLabel = new QLabel("Body Type:");
+    bodyTypeLabel->setStyleSheet("font-weight: bold; color: #333333;");
+    bodyTypeLayout->addWidget(bodyTypeLabel);
+    
     m_bodyTypeCombo = new QComboBox();
     m_bodyTypeCombo->addItems({"none", "raw", "form-data", "x-www-form-urlencoded", "binary"});
+    m_bodyTypeCombo->setStyleSheet(R"(
+        QComboBox {
+            padding: 6px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            background-color: white;
+            min-width: 150px;
+        }
+        QComboBox:hover {
+            border-color: #007acc;
+        }
+        QComboBox::drop-down {
+            border: none;
+        }
+        QComboBox::down-arrow {
+            image: none;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #666666;
+        }
+    )");
+    connect(m_bodyTypeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &RequestPanel::onBodyTypeChanged);
     bodyTypeLayout->addWidget(m_bodyTypeCombo);
     bodyTypeLayout->addStretch();
     bodyLayout->addLayout(bodyTypeLayout);
     
+    // Enhanced body editor with syntax highlighting
     m_bodyEdit = new QTextEdit();
-    m_bodyEdit->setPlaceholderText("Enter request body...");
-    bodyLayout->addWidget(m_bodyEdit);
+    m_bodyEdit->setPlaceholderText("Enter request body...\n\nFor JSON, the editor will automatically apply syntax highlighting.");
     
+    // Set font to monospace for better code readability
+    QFont monoFont("Consolas, Monaco, 'Courier New', monospace");
+    monoFont.setPointSize(11);
+    m_bodyEdit->setFont(monoFont);
+    
+    m_bodyEdit->setStyleSheet(R"(
+        QTextEdit {
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 10px;
+            background-color: #fafafa;
+            line-height: 1.4;
+        }
+        QTextEdit:focus {
+            border-color: #007acc;
+            background-color: white;
+        }
+    )");
+    
+    // Connect text change signal for syntax highlighting
+    connect(m_bodyEdit, &QTextEdit::textChanged, this, &RequestPanel::onBodyTextChanged);
+    
+    bodyLayout->addWidget(m_bodyEdit);
     m_requestTabs->addTab(bodyWidget, "Body");
     
     // Parameters tab
@@ -259,7 +359,7 @@ void RequestPanel::removeParameter()
 
 QString RequestPanel::getMethod() const
 {
-    return m_methodCombo->currentText();
+    return m_methodCombo->currentData().toString();
 }
 
 QString RequestPanel::getUrl() const
@@ -306,9 +406,12 @@ QString RequestPanel::getParameters() const
 
 void RequestPanel::setMethod(const QString &method)
 {
-    int index = m_methodCombo->findText(method);
-    if (index >= 0) {
-        m_methodCombo->setCurrentIndex(index);
+    // Find the index by data value instead of display text
+    for (int i = 0; i < m_methodCombo->count(); ++i) {
+        if (m_methodCombo->itemData(i).toString() == method) {
+            m_methodCombo->setCurrentIndex(i);
+            return;
+        }
     }
 }
 
@@ -404,4 +507,144 @@ void RequestPanel::populateTableFromHeaders()
 void RequestPanel::populateTableFromParameters()
 {
     // This would be used when loading from database - implementation handled in setParameters()
+}
+
+void RequestPanel::setupMethodCombo()
+{
+    // Clear existing items
+    m_methodCombo->clear();
+    
+    // Add HTTP methods with icons and colors
+    QStringList methods = {"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"};
+    
+    for (const QString &method : methods) {
+        QString icon = getHttpMethodIcon(method);
+        QString displayText = QString("%1 %2").arg(icon, method);
+        m_methodCombo->addItem(displayText, method);
+    }
+    
+    // Enhanced styling for method combo box
+    m_methodCombo->setStyleSheet(R"(
+        QComboBox {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            background-color: white;
+            font-size: 14px;
+            font-weight: bold;
+            min-width: 120px;
+        }
+        QComboBox:hover {
+            border-color: #c0c0c0;
+        }
+        QComboBox:focus {
+            border-color: #007acc;
+        }
+        QComboBox::drop-down {
+            border: none;
+            width: 20px;
+        }
+        QComboBox::down-arrow {
+            image: none;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #666666;
+        }
+        QComboBox QAbstractItemView {
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            background-color: white;
+            selection-background-color: #e3f2fd;
+        }
+    )");
+    
+    // Set default to GET
+    m_methodCombo->setCurrentIndex(0);
+}
+
+QString RequestPanel::getHttpMethodIcon(const QString &method)
+{
+    if (method == "GET") return "🔵";
+    else if (method == "POST") return "🟢";
+    else if (method == "PUT") return "🟡";
+    else if (method == "DELETE") return "🔴";
+    else if (method == "PATCH") return "🟠";
+    else if (method == "HEAD") return "⚪";
+    else if (method == "OPTIONS") return "🟣";
+    return "⚫";
+}
+
+QString RequestPanel::getHttpMethodColor(const QString &method)
+{
+    if (method == "GET") return "#007acc";
+    else if (method == "POST") return "#28a745";
+    else if (method == "PUT") return "#ffc107";
+    else if (method == "DELETE") return "#dc3545";
+    else if (method == "PATCH") return "#fd7e14";
+    else if (method == "HEAD") return "#6c757d";
+    else if (method == "OPTIONS") return "#6f42c1";
+    return "#343a40";
+}
+
+void RequestPanel::applySyntaxHighlighting()
+{
+    QString bodyType = m_bodyTypeCombo->currentText();
+    QString bodyText = m_bodyEdit->toPlainText().trimmed();
+    
+    // Remove existing highlighters
+    if (m_jsonHighlighter) {
+        delete m_jsonHighlighter;
+        m_jsonHighlighter = nullptr;
+    }
+    if (m_xmlHighlighter) {
+        delete m_xmlHighlighter;
+        m_xmlHighlighter = nullptr;
+    }
+    
+    // Apply appropriate highlighting based on content type or body content
+    if (bodyType == "raw" && !bodyText.isEmpty()) {
+        // Auto-detect JSON
+        if (bodyText.startsWith('{') || bodyText.startsWith('[')) {
+            m_jsonHighlighter = new JsonSyntaxHighlighter(m_bodyEdit->document());
+        }
+        // Auto-detect XML
+        else if (bodyText.startsWith('<')) {
+            m_xmlHighlighter = new XmlSyntaxHighlighter(m_bodyEdit->document());
+        }
+    }
+}
+
+void RequestPanel::updateBodyEditor()
+{
+    QString bodyType = m_bodyTypeCombo->currentText();
+    
+    if (bodyType == "none") {
+        m_bodyEdit->setEnabled(false);
+        m_bodyEdit->setPlaceholderText("Select a body type to enable the editor");
+    } else {
+        m_bodyEdit->setEnabled(true);
+        
+        if (bodyType == "raw") {
+            m_bodyEdit->setPlaceholderText("Enter raw body content...\n\nSupported formats:\n• JSON (auto-highlighted)\n• XML (auto-highlighted)\n• Plain text");
+        } else if (bodyType == "form-data") {
+            m_bodyEdit->setPlaceholderText("Enter form data (key=value pairs, one per line):\n\nExample:\nname=John Doe\nemail=john@example.com");
+        } else if (bodyType == "x-www-form-urlencoded") {
+            m_bodyEdit->setPlaceholderText("Enter URL-encoded data:\n\nExample:\nname=John+Doe&email=john%40example.com");
+        } else {
+            m_bodyEdit->setPlaceholderText("Enter request body content...");
+        }
+    }
+    
+    applySyntaxHighlighting();
+}
+
+void RequestPanel::onBodyTypeChanged()
+{
+    updateBodyEditor();
+}
+
+void RequestPanel::onBodyTextChanged()
+{
+    // Re-apply syntax highlighting when text changes
+    applySyntaxHighlighting();
 }
