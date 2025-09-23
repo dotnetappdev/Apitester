@@ -5,6 +5,7 @@
 #include "TestExplorer.h"
 #include "SettingsDialog.h"
 #include "ThemeManager.h"
+#include "UserManager.h"
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QFileDialog>
@@ -20,6 +21,9 @@ MainWindow::MainWindow(QWidget *parent)
     , m_collectionManager(nullptr)
     , m_responsePanel(nullptr)
     , m_testExplorer(nullptr)
+    , m_userManager(nullptr)
+    , m_userLabel(nullptr)
+    , m_userProfileButton(nullptr)
 {
     setupUI();
     setupMenuBar();
@@ -173,6 +177,19 @@ void MainWindow::setupToolBar()
 
 void MainWindow::setupStatusBar()
 {
+    // Create user profile button and label
+    m_userProfileButton = new QPushButton();
+    m_userProfileButton->setFlat(true);
+    m_userProfileButton->setStyleSheet("QPushButton { border: none; padding: 4px; color: white; }");
+    connect(m_userProfileButton, &QPushButton::clicked, this, &MainWindow::showUserProfile);
+    
+    m_userLabel = new QLabel("Loading user...");
+    m_userLabel->setStyleSheet("color: #ffffff; padding: 4px 8px; font-weight: 500;");
+    
+    // Add to status bar
+    statusBar()->addPermanentWidget(m_userProfileButton);
+    statusBar()->addPermanentWidget(m_userLabel);
+    
     statusBar()->showMessage("Ready");
 }
 
@@ -283,4 +300,73 @@ void MainWindow::onThemeChanged(const QString &theme)
     }
     
     statusBar()->showMessage(QString("Switched to %1 theme").arg(theme.toLower()), 2000);
+}
+
+void MainWindow::setUserManager(UserManager *userManager)
+{
+    m_userManager = userManager;
+    updateUserInterface();
+    
+    // Connect user management signals
+    if (m_userManager) {
+        connect(m_userManager, &UserManager::userLoggedIn, this, &MainWindow::updateUserInterface);
+        connect(m_userManager, &UserManager::userLoggedOut, this, &MainWindow::updateUserInterface);
+    }
+}
+
+void MainWindow::updateUserInterface()
+{
+    if (!m_userManager || !m_userManager->isUserLoggedIn()) {
+        return;
+    }
+    
+    User currentUser = m_userManager->getCurrentUser();
+    
+    // Update user label in status bar
+    if (m_userLabel) {
+        QString userText = QString("👤 %1 (%2)")
+            .arg(currentUser.displayName)
+            .arg(currentUser.role == UserRole::Admin ? "Admin" : "User");
+        m_userLabel->setText(userText);
+        m_userLabel->setStyleSheet("color: #ffffff; padding: 4px 8px; font-weight: 500;");
+    }
+    
+    // Update window title
+    QString windowTitle = QString("API Tester - %1 (%2)")
+        .arg(currentUser.displayName)
+        .arg(currentUser.role == UserRole::Admin ? "Administrator" : "User");
+    setWindowTitle(windowTitle);
+    
+    // Update collections to show user-specific data
+    if (m_collectionManager) {
+        // TODO: Filter collections by user access
+        // m_collectionManager->refreshCollections();
+    }
+}
+
+void MainWindow::showUserProfile()
+{
+    if (!m_userManager || !m_userManager->isUserLoggedIn()) {
+        return;
+    }
+    
+    User currentUser = m_userManager->getCurrentUser();
+    
+    QString profileInfo = QString(
+        "<h3>User Profile</h3>"
+        "<p><b>Username:</b> %1</p>"
+        "<p><b>Display Name:</b> %2</p>"
+        "<p><b>Email:</b> %3</p>"
+        "<p><b>Role:</b> %4</p>"
+        "<p><b>Last Login:</b> %5</p>"
+        "<p><b>Account Created:</b> %6</p>"
+    ).arg(currentUser.username)
+     .arg(currentUser.displayName)
+     .arg(currentUser.email.isEmpty() ? "Not specified" : currentUser.email)
+     .arg(currentUser.role == UserRole::Admin ? "Administrator" : "User")
+     .arg(currentUser.lastLoginAt.isValid() ? 
+          currentUser.lastLoginAt.toString("yyyy-MM-dd hh:mm:ss") : "Never")
+     .arg(currentUser.createdAt.toString("yyyy-MM-dd hh:mm:ss"));
+    
+    QMessageBox::information(this, "User Profile", profileInfo);
 }

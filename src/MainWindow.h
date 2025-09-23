@@ -8,11 +8,14 @@
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QToolBar>
 #include <QtWidgets/QAction>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QPushButton>
 
 class RequestPanel;
 class ResponsePanel;
 class CollectionManager;
 class TestExplorer;
+class UserManager;
 
 class MainWindow : public QMainWindow
 {
@@ -21,6 +24,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    
+    void setUserManager(UserManager *userManager);
 
 private slots:
     void newRequest();
@@ -38,6 +43,8 @@ private:
     void setupToolBar();
     void setupStatusBar();
     void createNewRequestTab();
+    void updateUserInterface();
+    void showUserProfile();
 
     // UI Components
     QSplitter *m_mainSplitter;
@@ -46,6 +53,11 @@ private:
     CollectionManager *m_collectionManager;
     ResponsePanel *m_responsePanel;
     TestExplorer *m_testExplorer;
+    
+    // User management
+    UserManager *m_userManager;
+    QLabel *m_userLabel;
+    QPushButton *m_userProfileButton;
     
     // Actions
     QAction *m_newRequestAction;
