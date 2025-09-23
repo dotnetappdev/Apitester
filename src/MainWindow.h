@@ -41,7 +41,7 @@ private:
 
     // UI Components
     QSplitter *m_mainSplitter;
-    QSplitter *m_leftSplitter;
+    QSplitter *m_rightSplitter;  // For requests and response
     QTabWidget *m_requestTabs;
     CollectionManager *m_collectionManager;
     ResponsePanel *m_responsePanel;

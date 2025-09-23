@@ -15,7 +15,7 @@
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_mainSplitter(nullptr)
-    , m_leftSplitter(nullptr)
+    , m_rightSplitter(nullptr)
     , m_requestTabs(nullptr)
     , m_collectionManager(nullptr)
     , m_responsePanel(nullptr)
@@ -48,17 +48,35 @@ void MainWindow::setupUI()
     QHBoxLayout *centralLayout = new QHBoxLayout(centralWidget);
     centralLayout->setContentsMargins(5, 5, 5, 5);
     
+    // Main horizontal splitter for Postman-like layout: [Collections | Request+Response]
     m_mainSplitter = new QSplitter(Qt::Horizontal, this);
     centralLayout->addWidget(m_mainSplitter);
     
-    // Create left splitter for collections and requests
-    m_leftSplitter = new QSplitter(Qt::Vertical, this);
+    // Left panel: Collections with integrated test explorer
+    QWidget *leftPanel = new QWidget();
+    QVBoxLayout *leftLayout = new QVBoxLayout(leftPanel);
+    leftLayout->setContentsMargins(0, 0, 0, 0);
+    leftLayout->setSpacing(5);
     
-    // Create collection manager
+    // Collections manager
     m_collectionManager = new CollectionManager(this);
-    m_leftSplitter->addWidget(m_collectionManager);
+    leftLayout->addWidget(m_collectionManager, 2); // Give more space to collections
     
-    // Create request tabs
+    // Test explorer (smaller section at bottom)
+    m_testExplorer = new TestExplorer(this);
+    leftLayout->addWidget(m_testExplorer, 1);
+    
+    // Add left panel to main splitter
+    m_mainSplitter->addWidget(leftPanel);
+    
+    // Right side: Request tabs and Response panel
+    m_rightSplitter = new QSplitter(Qt::Horizontal, this);
+    
+    // Request tabs area
+    QWidget *requestArea = new QWidget();
+    QVBoxLayout *requestLayout = new QVBoxLayout(requestArea);
+    requestLayout->setContentsMargins(0, 0, 0, 0);
+    
     m_requestTabs = new QTabWidget(this);
     m_requestTabs->setTabsClosable(true);
     m_requestTabs->setMovable(true);
@@ -70,22 +88,24 @@ void MainWindow::setupUI()
         }
     });
     
-    m_leftSplitter->addWidget(m_requestTabs);
+    requestLayout->addWidget(m_requestTabs);
     
-    // Create test explorer
-    m_testExplorer = new TestExplorer(this);
-    m_leftSplitter->addWidget(m_testExplorer);
-    
-    // Create response panel
+    // Response panel
     m_responsePanel = new ResponsePanel(this);
     
-    // Add to main splitter
-    m_mainSplitter->addWidget(m_leftSplitter);
-    m_mainSplitter->addWidget(m_responsePanel);
+    // Add request area and response panel to right splitter
+    m_rightSplitter->addWidget(requestArea);
+    m_rightSplitter->addWidget(m_responsePanel);
     
-    // Set splitter sizes (collections:requests:tests = 200:400:200, response = 600)
-    m_leftSplitter->setSizes({200, 400, 200});
-    m_mainSplitter->setSizes({800, 600});
+    // Add right splitter to main splitter
+    m_mainSplitter->addWidget(m_rightSplitter);
+    
+    // Set splitter sizes for Postman-like layout
+    // Collections panel: 250px, Request+Response: remaining space
+    m_mainSplitter->setSizes({250, 1150});
+    
+    // Request area: 600px, Response: 550px
+    m_rightSplitter->setSizes({600, 550});
 }
 
 void MainWindow::setupMenuBar()
