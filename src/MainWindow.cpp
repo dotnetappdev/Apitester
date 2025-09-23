@@ -2,6 +2,8 @@
 #include "RequestPanel.h"
 #include "ResponsePanel.h"
 #include "CollectionManager.h"
+#include "TestExplorer.h"
+#include "SettingsDialog.h"
 #include "ThemeManager.h"
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMessageBox>
@@ -17,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_requestTabs(nullptr)
     , m_collectionManager(nullptr)
     , m_responsePanel(nullptr)
+    , m_testExplorer(nullptr)
 {
     setupUI();
     setupMenuBar();
@@ -69,6 +72,10 @@ void MainWindow::setupUI()
     
     m_leftSplitter->addWidget(m_requestTabs);
     
+    // Create test explorer
+    m_testExplorer = new TestExplorer(this);
+    m_leftSplitter->addWidget(m_testExplorer);
+    
     // Create response panel
     m_responsePanel = new ResponsePanel(this);
     
@@ -76,8 +83,8 @@ void MainWindow::setupUI()
     m_mainSplitter->addWidget(m_leftSplitter);
     m_mainSplitter->addWidget(m_responsePanel);
     
-    // Set splitter sizes
-    m_leftSplitter->setSizes({200, 600});
+    // Set splitter sizes (collections:requests:tests = 200:400:200, response = 600)
+    m_leftSplitter->setSizes({200, 400, 200});
     m_mainSplitter->setSizes({800, 600});
 }
 
@@ -102,6 +109,13 @@ void MainWindow::setupMenuBar()
     m_loadAction->setShortcut(QKeySequence::Open);
     connect(m_loadAction, &QAction::triggered, this, &MainWindow::loadCollection);
     fileMenu->addAction(m_loadAction);
+    
+    fileMenu->addSeparator();
+    
+    m_settingsAction = new QAction("&Settings", this);
+    m_settingsAction->setShortcut(QKeySequence::Preferences);
+    connect(m_settingsAction, &QAction::triggered, this, &MainWindow::showSettings);
+    fileMenu->addAction(m_settingsAction);
     
     fileMenu->addSeparator();
     
@@ -214,8 +228,39 @@ void MainWindow::about()
         "<li>Request body support (JSON, raw, form-data)</li>"
         "<li>Response viewer with syntax highlighting</li>"
         "<li>Collections management</li>"
+        "<li>Test runner with pass/fail indicators</li>"
         "<li>Dark and light themes</li>"
         "<li>SQLite database for storage</li>"
         "</ul>"
         "<p>Copyright © 2024 API Tester</p>");
+}
+
+void MainWindow::showSettings()
+{
+    SettingsDialog dialog(this);
+    
+    // Connect settings change signals
+    connect(&dialog, &SettingsDialog::databasePathChanged, this, &MainWindow::onDatabasePathChanged);
+    connect(&dialog, &SettingsDialog::themeChanged, this, &MainWindow::onThemeChanged);
+    
+    dialog.exec();
+}
+
+void MainWindow::onDatabasePathChanged(const QString &newPath)
+{
+    // TODO: Implement database migration to new path
+    statusBar()->showMessage(QString("Database path changed to: %1 (restart required)").arg(newPath), 5000);
+}
+
+void MainWindow::onThemeChanged(const QString &theme)
+{
+    ThemeManager &themeManager = ThemeManager::instance();
+    
+    if (theme == "Dark") {
+        themeManager.applyTheme(ThemeManager::Dark);
+    } else {
+        themeManager.applyTheme(ThemeManager::Light);
+    }
+    
+    statusBar()->showMessage(QString("Switched to %1 theme").arg(theme.toLower()), 2000);
 }

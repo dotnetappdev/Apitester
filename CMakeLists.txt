@@ -27,6 +27,9 @@ set(SOURCES
     src/HttpClient.cpp
     src/RequestModel.cpp
     src/CollectionModel.cpp
+    src/SettingsDialog.cpp
+    src/TestRunner.cpp
+    src/TestExplorer.cpp
 )
 
 set(HEADERS
@@ -39,6 +42,9 @@ set(HEADERS
     src/HttpClient.h
     src/RequestModel.h
     src/CollectionModel.h
+    src/SettingsDialog.h
+    src/TestRunner.h
+    src/TestExplorer.h
 )
 
 # UI files

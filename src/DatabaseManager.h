@@ -12,7 +12,9 @@ public:
     static DatabaseManager& instance();
     
     bool initialize();
+    bool initialize(const QString &customPath);
     QSqlDatabase database() const { return m_database; }
+    QString getCurrentDatabasePath() const { return m_currentDatabasePath; }
     
     // Collection management
     bool createCollection(const QString &name, const QString &description = QString());
@@ -39,6 +41,7 @@ private:
     bool createTables();
     
     QSqlDatabase m_database;
+    QString m_currentDatabasePath;
 };
 
 #endif // DATABASEMANAGER_H

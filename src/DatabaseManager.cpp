@@ -2,6 +2,7 @@
 #include <QtCore/QStandardPaths>
 #include <QtCore/QDir>
 #include <QtCore/QDebug>
+#include <QtCore/QSettings>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlError>
 
@@ -18,13 +19,28 @@ DatabaseManager::DatabaseManager(QObject *parent)
 
 bool DatabaseManager::initialize()
 {
-    // Create database directory if it doesn't exist
+    QSettings settings;
+    QString customPath = settings.value("database/path", "").toString();
+    
+    if (!customPath.isEmpty()) {
+        return initialize(customPath);
+    }
+    
+    // Use default path
     QString dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QDir().mkpath(dataPath);
+    return initialize(dataPath);
+}
+
+bool DatabaseManager::initialize(const QString &customPath)
+{
+    // Create database directory if it doesn't exist
+    QDir().mkpath(customPath);
+    
+    m_currentDatabasePath = customPath + "/apitester.db";
     
     // Initialize SQLite database
     m_database = QSqlDatabase::addDatabase("QSQLITE");
-    m_database.setDatabaseName(dataPath + "/apitester.db");
+    m_database.setDatabaseName(m_currentDatabasePath);
     
     if (!m_database.open()) {
         qWarning() << "Failed to open database:" << m_database.lastError().text();

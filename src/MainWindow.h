@@ -12,6 +12,7 @@
 class RequestPanel;
 class ResponsePanel;
 class CollectionManager;
+class TestExplorer;
 
 class MainWindow : public QMainWindow
 {
@@ -25,8 +26,11 @@ private slots:
     void newRequest();
     void saveCollection();
     void loadCollection();
+    void showSettings();
     void toggleTheme();
     void about();
+    void onDatabasePathChanged(const QString &newPath);
+    void onThemeChanged(const QString &theme);
 
 private:
     void setupUI();
@@ -41,11 +45,13 @@ private:
     QTabWidget *m_requestTabs;
     CollectionManager *m_collectionManager;
     ResponsePanel *m_responsePanel;
+    TestExplorer *m_testExplorer;
     
     // Actions
     QAction *m_newRequestAction;
     QAction *m_saveAction;
     QAction *m_loadAction;
+    QAction *m_settingsAction;
     QAction *m_toggleThemeAction;
     QAction *m_aboutAction;
     QAction *m_exitAction;
