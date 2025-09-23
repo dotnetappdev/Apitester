@@ -52,7 +52,7 @@ void MainWindow::setupUI()
     QHBoxLayout *centralLayout = new QHBoxLayout(centralWidget);
     centralLayout->setContentsMargins(5, 5, 5, 5);
     
-    // Main horizontal splitter for Postman-like layout: [Collections | Request+Response]
+    // Main horizontal splitter for Postman-like layout: [Collections | Request/Response Stack]
     m_mainSplitter = new QSplitter(Qt::Horizontal, this);
     centralLayout->addWidget(m_mainSplitter);
     
@@ -73,10 +73,10 @@ void MainWindow::setupUI()
     // Add left panel to main splitter
     m_mainSplitter->addWidget(leftPanel);
     
-    // Right side: Request tabs and Response panel
-    m_rightSplitter = new QSplitter(Qt::Horizontal, this);
+    // Right side: Request tabs stacked above Response panel (Postman-style)
+    m_rightSplitter = new QSplitter(Qt::Vertical, this); // Changed to Vertical!
     
-    // Request tabs area
+    // Request tabs area (top)
     QWidget *requestArea = new QWidget();
     QVBoxLayout *requestLayout = new QVBoxLayout(requestArea);
     requestLayout->setContentsMargins(0, 0, 0, 0);
@@ -94,22 +94,22 @@ void MainWindow::setupUI()
     
     requestLayout->addWidget(m_requestTabs);
     
-    // Response panel
+    // Response panel (bottom)
     m_responsePanel = new ResponsePanel(this);
     
-    // Add request area and response panel to right splitter
+    // Add request area (top) and response panel (bottom) to vertical splitter
     m_rightSplitter->addWidget(requestArea);
     m_rightSplitter->addWidget(m_responsePanel);
     
     // Add right splitter to main splitter
     m_mainSplitter->addWidget(m_rightSplitter);
     
-    // Set splitter sizes for Postman-like layout
-    // Collections panel: 250px, Request+Response: remaining space
-    m_mainSplitter->setSizes({250, 1150});
+    // Set splitter sizes for authentic Postman-like layout
+    // Collections panel: 300px, Request+Response stack: remaining space
+    m_mainSplitter->setSizes({300, 1100});
     
-    // Request area: 600px, Response: 550px
-    m_rightSplitter->setSizes({600, 550});
+    // Request area (top): 400px, Response (bottom): 400px - equal split like Postman
+    m_rightSplitter->setSizes({400, 400});
 }
 
 void MainWindow::setupMenuBar()
