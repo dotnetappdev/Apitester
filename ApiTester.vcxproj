@@ -131,6 +131,7 @@
     <None Include="CMakeLists.txt" />
     <None Include="README.md" />
     <None Include="VisualStudio-Setup.md" />
+    <None Include="VISUAL_STUDIO_BUILD_FIX.md" />
     <None Include="Qt5.props" />
     <None Include="setup-qt.bat" />
     <None Include="setup-qt.ps1" />
