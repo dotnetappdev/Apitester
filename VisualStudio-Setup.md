@@ -2,6 +2,26 @@
 
 This guide helps you build the ApiTester application using Visual Studio on Windows.
 
+## Quick Setup
+
+For the fastest setup, run one of the automated setup scripts:
+
+**Windows Command Prompt:**
+```cmd
+setup-qt.bat
+```
+
+**PowerShell:**
+```powershell
+.\setup-qt.ps1
+```
+
+These scripts will:
+- Check if Qt5 is already installed and configured
+- Search for common Qt5 installation paths
+- Set the QTDIR environment variable automatically
+- Validate the Qt5 installation
+
 ## Prerequisites
 
 1. **Visual Studio 2019 or 2022** with C++ development tools
@@ -25,7 +45,13 @@ This guide helps you build the ApiTester application using Visual Studio on Wind
 vcpkg install qt5:x64-windows
 ```
 
-## Environment Setup
+## Environment Setup (Automatic)
+
+**Recommended**: Run `setup-qt.bat` from the project root directory. This script will automatically detect and configure Qt5 for you.
+
+## Environment Setup (Manual)
+
+If you prefer to set up manually or the automatic setup fails:
 
 1. Set the `QTDIR` environment variable to your Qt installation path:
    - Example: `C:\Qt\5.15.2\msvc2019_64`
@@ -40,6 +66,8 @@ vcpkg install qt5:x64-windows
 2. Select your desired configuration (Debug/Release) and platform (x64)
 3. Build the solution (Ctrl+Shift+B)
 
+**Note**: The project now includes automatic Qt detection. If Qt5 is not found, you'll get a clear error message with installation instructions.
+
 The executable will be created in:
 - Debug: `build\Debug\ApiTester.exe`
 - Release: `build\Release\ApiTester.exe`
@@ -48,13 +76,39 @@ The executable will be created in:
 
 - The project is configured for x64 builds only
 - Qt libraries are linked dynamically
+- The project automatically detects Qt5 installations in common locations
+- If QTDIR is not set, the project will attempt to find Qt5 automatically
 - Make sure Qt DLLs are accessible when running the application
 
 ## Troubleshooting
 
-### Qt Headers Not Found
-- Verify `QTDIR` environment variable is set correctly
+### Qt Headers Not Found (Updated)
+
+**First**, try the automated setup:
+```cmd
+setup-qt.bat
+```
+or
+```powershell
+.\setup-qt.ps1
+```
+
+**If that fails**:
+- Verify Qt5 is installed with MSVC 2019 64-bit compiler
+- Set `QTDIR` environment variable manually to your Qt installation path
 - Restart Visual Studio after setting environment variables
+
+**Common Qt installation paths**:
+- `C:\Qt\5.15.2\msvc2019_64`
+- `C:\Qt\5.15.1\msvc2019_64`
+- `C:\Qt\5.14.2\msvc2017_64`
+
+### Build Errors with Qt
+
+The project now provides detailed error messages when Qt5 is not found. Look for:
+- Clear installation instructions in the build output
+- Paths that were checked for Qt5
+- Specific missing components
 
 ### Qt Libraries Not Found
 - Check that Qt's lib directory is accessible
