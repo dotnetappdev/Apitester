@@ -16,6 +16,16 @@ qrc_*.cpp
 .vs/
 *.pro.user
 *.pro.user.*
+*.vcxproj.user
+*.sdf
+*.opensdf
+*.db
+*.ipch
+*.aps
+*.pch
+*.pdb
+*.idb
+*.ilk
 
 # OS files
 .DS_Store

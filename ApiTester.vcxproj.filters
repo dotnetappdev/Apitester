@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{8E5C5F0E-6A7B-4A1A-9F1A-7F3A2C4B5D6E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{9F6D7F2E-7B8C-4B2B-8E2B-8F4A3D5C6F7E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{A5B7C8D9-8C9D-4C3C-9D3D-9E5B4F6C7D8E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Managers">
+      <UniqueIdentifier>{B6C8D9EA-9DAE-4D4D-AE4E-AF6C5A7D8E9F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Testing">
+      <UniqueIdentifier>{C7D9EAFB-AEBF-4E5E-BF5F-BF7D6B8E9FAF}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MainWindow.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RequestPanel.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResponsePanel.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SettingsDialog.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LoginDialog.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CollectionManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DatabaseManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ThemeManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UserManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ConfigManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HttpClient.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SyntaxHighlighter.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RequestModel.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CollectionModel.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TestRunner.cpp">
+      <Filter>Testing</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TestExplorer.cpp">
+      <Filter>Testing</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\MainWindow.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RequestPanel.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ResponsePanel.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SettingsDialog.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\LoginDialog.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CollectionManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DatabaseManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ThemeManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\UserManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ConfigManager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HttpClient.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SyntaxHighlighter.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RequestModel.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CollectionModel.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TestRunner.h">
+      <Filter>Testing</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TestExplorer.h">
+      <Filter>Testing</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CMakeLists.txt" />
+    <None Include="README.md" />
+    <None Include="resources\resources.qrc">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
