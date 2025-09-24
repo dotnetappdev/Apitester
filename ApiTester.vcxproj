@@ -134,6 +134,8 @@
     <None Include="Qt5.props" />
     <None Include="setup-qt.bat" />
     <None Include="setup-qt.ps1" />
+    <None Include="build-cmake-vs.bat" />
+    <None Include="build-cmake-vs.ps1" />
     <None Include="resources\resources.qrc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -130,16 +130,30 @@ The project now provides detailed error messages when Qt5 is not found. Look for
 - Qt5Networkd.dll
 - Qt5Sqld.dll
 
-## Alternative Build Method
+## Alternative Build Method (CMake)
 
-If you prefer CMake, you can still use the existing `CMakeLists.txt`:
+If you prefer CMake or encounter issues with the direct Visual Studio build, you can use CMake to generate a Visual Studio solution:
 
+**Automated CMake build:**
 ```cmd
-mkdir build
-cd build
+build-cmake-vs.bat
+```
+or
+```powershell
+.\build-cmake-vs.ps1
+```
+
+**Manual CMake build:**
+```cmd
+mkdir build-cmake
+cd build-cmake
 cmake .. -G "Visual Studio 17 2022" -A x64
 cmake --build . --config Release
 ```
+
+This will create a `build-cmake\ApiTester.sln` file that you can open in Visual Studio for debugging and development.
+
+**Note**: CMake build requires Qt5 to be properly configured via QTDIR or CMAKE_PREFIX_PATH environment variables.
 
 ## Project Structure in Visual Studio
 
