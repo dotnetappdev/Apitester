@@ -61,9 +61,11 @@ A modern Postman-like desktop application for API testing built with C++ and Qt.
 For Windows users, a Visual Studio solution file is provided for easy building:
 
 1. Install Qt5 for MSVC (5.15.x recommended)
-2. Set `QTDIR` environment variable to your Qt installation path
+2. Run the automated setup script: `setup-qt.bat` or `setup-qt.ps1`
 3. Open `ApiTester.sln` in Visual Studio 2019/2022
 4. Build the solution (Ctrl+Shift+B)
+
+**The project now includes automatic Qt5 detection and clear error messages if Qt is not properly configured.**
 
 For detailed setup instructions, see [VisualStudio-Setup.md](VisualStudio-Setup.md).
 

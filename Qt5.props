@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="UserMacros">
+    <!-- Qt5 Detection and Configuration -->
+    
+    <!-- Check if QTDIR is set and exists -->
+    <QtDirExists Condition="'$(QTDIR)' != '' AND Exists('$(QTDIR)')">true</QtDirExists>
+    <QtDirExists Condition="'$(QTDIR)' == '' OR !Exists('$(QTDIR)')">false</QtDirExists>
+    
+    <!-- Alternative Qt paths to try if QTDIR is not set -->
+    <Qt5Path_1 Condition="'$(QtDirExists)' == 'false'">C:\Qt\5.15.2\msvc2019_64</Qt5Path_1>
+    <Qt5Path_2 Condition="'$(QtDirExists)' == 'false'">C:\Qt\5.15.1\msvc2019_64</Qt5Path_2>
+    <Qt5Path_3 Condition="'$(QtDirExists)' == 'false'">C:\Qt\5.14.2\msvc2017_64</Qt5Path_3>
+    <Qt5Path_4 Condition="'$(QtDirExists)' == 'false'">C:\Qt\6.0.0\msvc2019_64</Qt5Path_4>
+    <Qt5Path_vcpkg Condition="'$(QtDirExists)' == 'false' AND '$(VCPKG_ROOT)' != ''">$(VCPKG_ROOT)\installed\x64-windows</Qt5Path_vcpkg>
+    
+    <!-- Determine the Qt path to use -->
+    <QtPath Condition="'$(QtDirExists)' == 'true'">$(QTDIR)</QtPath>
+    <QtPath Condition="'$(QtDirExists)' == 'false' AND Exists('$(Qt5Path_1)')">$(Qt5Path_1)</QtPath>
+    <QtPath Condition="'$(QtDirExists)' == 'false' AND !Exists('$(Qt5Path_1)') AND Exists('$(Qt5Path_2)')">$(Qt5Path_2)</QtPath>
+    <QtPath Condition="'$(QtDirExists)' == 'false' AND !Exists('$(Qt5Path_1)') AND !Exists('$(Qt5Path_2)') AND Exists('$(Qt5Path_3)')">$(Qt5Path_3)</QtPath>
+    <QtPath Condition="'$(QtDirExists)' == 'false' AND !Exists('$(Qt5Path_1)') AND !Exists('$(Qt5Path_2)') AND !Exists('$(Qt5Path_3)') AND Exists('$(Qt5Path_4)')">$(Qt5Path_4)</QtPath>
+    <QtPath Condition="'$(QtDirExists)' == 'false' AND !Exists('$(Qt5Path_1)') AND !Exists('$(Qt5Path_2)') AND !Exists('$(Qt5Path_3)') AND !Exists('$(Qt5Path_4)') AND Exists('$(Qt5Path_vcpkg)')">$(Qt5Path_vcpkg)</QtPath>
+    
+    <!-- Final validation -->
+    <QtPathValid Condition="'$(QtPath)' != '' AND Exists('$(QtPath)')">true</QtPathValid>
+    <QtPathValid Condition="'$(QtPath)' == '' OR !Exists('$(QtPath)')">false</QtPathValid>
+    
+    <!-- Qt Include and Library paths -->
+    <QtIncludePath Condition="'$(QtPathValid)' == 'true'">$(QtPath)\include</QtIncludePath>
+    <QtLibraryPath Condition="'$(QtPathValid)' == 'true'">$(QtPath)\lib</QtLibraryPath>
+    <QtBinPath Condition="'$(QtPathValid)' == 'true'">$(QtPath)\bin</QtBinPath>
+  </PropertyGroup>
+  
+  <ItemDefinitionGroup Condition="'$(QtPathValid)' == 'true'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(QtIncludePath);$(QtIncludePath)\QtCore;$(QtIncludePath)\QtWidgets;$(QtIncludePath)\QtNetwork;$(QtIncludePath)\QtSql;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>QT_WIDGETS_LIB;QT_NETWORK_LIB;QT_SQL_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(QtLibraryPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug' AND '$(QtPathValid)' == 'true'">
+    <Link>
+      <AdditionalDependencies>Qt5Cored.lib;Qt5Widgetsd.lib;Qt5Networkd.lib;Qt5Sqld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release' AND '$(QtPathValid)' == 'true'">
+    <Link>
+      <AdditionalDependencies>Qt5Core.lib;Qt5Widgets.lib;Qt5Network.lib;Qt5Sql.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  
+  <!-- Pre-build validation -->
+  <Target Name="ValidateQt" BeforeTargets="PrepareForBuild">
+    <Warning Condition="'$(QtPathValid)' == 'false' AND '$(QTDIR)' == ''" Text="QTDIR environment variable is not set. Attempting to auto-detect Qt5 installation..." />
+    <Error Condition="'$(QtPathValid)' == 'false'" Text="Qt5 installation not found!
+
+Please install Qt5 and set the QTDIR environment variable to your Qt installation path.
+
+Installation options:
+1. Download Qt from https://www.qt.io/download-qt-installer and install Qt 5.15.x with MSVC 2019 64-bit
+2. Set QTDIR environment variable (example: C:\Qt\5.15.2\msvc2019_64)
+3. Alternative: Use vcpkg to install Qt5 (vcpkg install qt5:x64-windows)
+
+Checked paths:
+- QTDIR: $(QTDIR)
+- $(Qt5Path_1)
+- $(Qt5Path_2)
+- $(Qt5Path_3)
+- $(Qt5Path_4)
+- VCPKG: $(Qt5Path_vcpkg)
+
+For detailed setup instructions, see VisualStudio-Setup.md" />
+    
+    <Message Condition="'$(QtPathValid)' == 'true'" Text="✓ Using Qt5 from: $(QtPath)" Importance="high" />
+    <Message Condition="'$(QtPathValid)' == 'true'" Text="  - Include path: $(QtIncludePath)" />
+    <Message Condition="'$(QtPathValid)' == 'true'" Text="  - Library path: $(QtLibraryPath)" />
+  </Target>
+</Project>
